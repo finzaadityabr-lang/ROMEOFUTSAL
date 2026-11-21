@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Futsal Brasil – Jogo Bonito</title>
+  <meta name="description" content="Situs futsal bertema Brasil: bola, jadwal, gawang, dan pemain.">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- SVG bola yang dipakai ulang -->
+  <svg width="0" height="0" style="position:absolute" aria-hidden="true">
+    <symbol id="ball" viewBox="0 0 100 100">
+      <circle cx="50" cy="50" r="48" fill="#fff" stroke="#1f6f43" stroke-width="3"/>
+      <polygon points="50,33 66,45 60,64 40,64 34,45" fill="#1f6f43"/>
+      <g stroke="#1f6f43" stroke-width="3" stroke-linecap="round">
+        <line x1="50" y1="33" x2="50" y2="4"/>
+        <line x1="66" y1="45" x2="94" y2="36"/>
+        <line x1="60" y1="64" x2="77" y2="88"/>
+        <line x1="40" y1="64" x2="23" y2="88"/>
+        <line x1="34" y1="45" x2="6" y2="36"/>
+      </g>
+      <g fill="#86d9a3" stroke="#1f6f43" stroke-width="2">
+        <path d="M50 4 L36 10 L40 22 L50 20 L60 22 L64 10 Z" opacity=".75"/>
+        <path d="M94 36 L90 22 L78 24 L76 34 L84 42 Z" opacity=".75"/>
+        <path d="M77 88 L86 76 L78 66 L68 70 L68 82 Z" opacity=".75"/>
+        <path d="M23 88 L14 76 L22 66 L32 70 L32 82 Z" opacity=".75"/>
+        <path d="M6 36 L10 22 L22 24 L24 34 L16 42 Z" opacity=".75"/>
+      </g>
+    </symbol>
+  </svg>
+
+  <header class="navbar" id="top">
+    <a href="#top" class="brand">
+      <svg class="brand-ball"><use href="#ball"/></svg>
+      <span>Futsal<strong>Brasil</strong></span>
+    </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Buka menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+    <nav class="nav-links" id="navLinks">
+      <a href="#bola">Bola</a>
+      <a href="#gawang">Gawang</a>
+      <a href="#jadwal">Jadwal</a>
+      <a href="#pemain">Pemain</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-text reveal">
+        <p class="eyebrow">Jogo Bonito · Quadra Brasileira</p>
+        <h1>Main Cantik<br>Gaya <span class="hl">Brasil</span></h1>
+        <p class="lead">Futsal lahir dari lapangan sempit Sao Paulo dan Montevideo. Teknik, kecepatan, dan skill jalanan, semua ada di sini.</p>
+        <div class="hero-cta">
+          <a href="#jadwal" class="btn btn-primary">Lihat Jadwal</a>
+          <a href="#gawang" class="btn btn-ghost">Coba Tendang</a>
+        </div>
+        <div class="countdown" aria-live="polite">
+          <p class="cd-label">Laga berikutnya: <strong id="nextMatchName">-</strong></p>
+          <div class="cd-boxes">
+            <div><b id="cdD">00</b><small>Hari</small></div>
+            <div><b id="cdH">00</b><small>Jam</small></div>
+            <div><b id="cdM">00</b><small>Menit</small></div>
+            <div><b id="cdS">00</b><small>Detik</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-art reveal">
+        <div class="hero-circle"></div>
+        <svg class="hero-ball"><use href="#ball"/></svg>
+        <div class="ball-shadow"></div>
+      </div>
+    </section>
+
+    <div class="samba-strip" aria-hidden="true"></div>
+
+    <!-- BOLA -->
+    <section class="section" id="bola">
+      <div class="section-head reveal">
+        <p class="eyebrow">01 · Bola</p>
+        <h2>Bola Futsal</h2>
+        <p>Lebih kecil dan lebih berat dari bola sepak biasa, pantulannya rendah sehingga kontrol di tanah jadi lebih mudah.</p>
+      </div>
+      <div class="ball-grid">
+        <div class="ball-display reveal">
+          <svg class="spin-ball" id="spinBall"><use href="#ball"/></svg>
+          <button class="btn btn-ghost" id="spinBtn">Putar Bola</button>
+        </div>
+        <div class="spec-list reveal">
+          <article class="spec"><span class="spec-ico">⚽</span><div><h3>Ukuran 4</h3><p>Keliling 62–64 cm.</p></div></article>
+          <article class="spec"><span class="spec-ico">⚖️</span><div><h3>Berat 400–440 gram</h3><p>Lebih berat, jadi tidak mudah melambung.</p></div></article>
+          <article class="spec"><span class="spec-ico">⤵️</span><div><h3>Pantulan Rendah</h3><p>Dijatuhkan dari 2 m, memantul sekitar 50–65 cm.</p></div></article>
+          <article class="spec"><span class="spec-ico">🇧🇷</span><div><h3>Gaya Brasil</h3><p>Dribel rapat, operan satu-dua, dan sentuhan pendek.</p></div></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- GAWANG -->
+    <section class="section alt" id="gawang">
+      <div class="section-head reveal">
+        <p class="eyebrow">02 · Gawang</p>
+        <h2>Gawang Futsal</h2>
+        <p>Lebar 3 m, tinggi 2 m. Klik area gawang untuk menembak. Kiper akan menyelam secara acak. Kamu punya 5 tendangan!</p>
+      </div>
+      <div class="game reveal">
+        <div class="scoreboard">
+          <div><small>Tendangan</small><b id="shotCount">0/5</b></div>
+          <div><small>Gol</small><b id="goalCount">0</b></div>
+          <div><small>Tersimpan</small><b id="saveCount">0</b></div>
+        </div>
+        <div class="goal-wrap">
+          <div class="goal" id="goal" role="button" tabindex="0" aria-label="Area gawang, klik untuk menembak">
+            <div class="net"></div>
+            <div class="keeper" id="keeper">
+              <div class="k-head"></div>
+              <div class="k-body"></div>
+              <div class="k-arm l"></div>
+              <div class="k-arm r"></div>
+            </div>
+            <svg class="shot-ball" id="shotBall"><use href="#ball"/></svg>
+            <div class="verdict" id="verdict"></div>
+          </div>
+          <div class="goal-ground"></div>
+        </div>
+        <p class="game-msg" id="gameMsg">Klik di mana saja pada gawang untuk menendang.</p>
+        <button class="btn btn-primary" id="resetGame">Main Lagi</button>
+      </div>
+    </section>
+
+    <!-- JADWAL -->
+    <section class="section" id="jadwal">
+      <div class="section-head reveal">
+        <p class="eyebrow">03 · Jadwal</p>
+        <h2>Jadwal Pertandingan</h2>
+        <p>Liga Futsal Seleção · Musim 2026/27 (data contoh)</p>
+      </div>
+      <div class="tabs reveal" role="tablist">
+        <button class="tab active" data-filter="all" role="tab">Semua</button>
+        <button class="tab" data-filter="upcoming" role="tab">Mendatang</button>
+        <button class="tab" data-filter="done" role="tab">Selesai</button>
+      </div>
+      <div class="match-list" id="matchList"></div>
+    </section>
+
+    <!-- PEMAIN -->
+    <section class="section alt" id="pemain">
+      <div class="section-head reveal">
+        <p class="eyebrow">04 · Pemain</p>
+        <h2>Skuad Utama</h2>
+        <p>Nama pemain di bawah adalah contoh fiktif. Ganti sesuai tim kamu.</p>
+      </div>
+      <div class="tabs reveal" id="posTabs" role="tablist">
+        <button class="tab active" data-pos="all">Semua</button>
+        <button class="tab" data-pos="Goleiro">Kiper</button>
+        <button class="tab" data-pos="Fixo">Fixo</button>
+        <button class="tab" data-pos="Ala">Ala</button>
+        <button class="tab" data-pos="Pivô">Pivô</button>
+      </div>
+      <div class="player-grid" id="playerGrid"></div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <svg class="brand-ball"><use href="#ball"/></svg>
+    <p><strong>FutsalBrasil</strong> · Jogo bonito dalam lapangan kecil.</p>
+    <p class="small">Jadwal dan pemain adalah data contoh.</p>
+    <a href="#top" class="to-top">↑ Ke atas</a>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
