@@ -14,16 +14,16 @@ const matches = [
 const OUR_TEAM = "Rio Fúria";
 
 const players = [
-  { name: "Thiago Almeida", pos: "Goleiro", num: 1,  g: 0,  a: 2,  m: 14 },
-  { name: "Bruno Carvalho", pos: "Goleiro", num: 12, g: 0,  a: 0,  m: 6 },
-  { name: "Rafael Souza",   pos: "Fixo",    num: 4,  g: 3,  a: 7,  m: 14 },
-  { name: "Lucas Ferreira", pos: "Fixo",    num: 5,  g: 1,  a: 4,  m: 12 },
-  { name: "Gabriel Rocha",  pos: "Ala",     num: 7,  g: 11, a: 9,  m: 14 },
-  { name: "Matheus Lima",   pos: "Ala",     num: 10, g: 9,  a: 13, m: 14 },
-  { name: "Pedro Nascimento", pos: "Ala",   num: 8,  g: 5,  a: 6,  m: 13 },
-  { name: "Diego Barbosa",  pos: "Pivô",    num: 9,  g: 15, a: 4,  m: 14 },
-  { name: "Felipe Costa",   pos: "Pivô",    num: 11, g: 8,  a: 3,  m: 11 },
-  { name: "Caio Mendes",    pos: "Ala",     num: 14, g: 4,  a: 5,  m: 9 }
+  { name: "Thiago Almeida",   pos: "Goleiro", num: 1,  g: 0,  a: 2,  m: 14 },
+  { name: "Bruno Carvalho",   pos: "Goleiro", num: 12, g: 0,  a: 0,  m: 6 },
+  { name: "Rafael Souza",     pos: "Fixo",    num: 4,  g: 3,  a: 7,  m: 14 },
+  { name: "Lucas Ferreira",   pos: "Fixo",    num: 5,  g: 1,  a: 4,  m: 12 },
+  { name: "Gabriel Rocha",    pos: "Ala",     num: 7,  g: 11, a: 9,  m: 14 },
+  { name: "Matheus Lima",     pos: "Ala",     num: 10, g: 9,  a: 13, m: 14 },
+  { name: "Pedro Nascimento", pos: "Ala",     num: 8,  g: 5,  a: 6,  m: 13 },
+  { name: "Diego Barbosa",    pos: "Pivô",    num: 9,  g: 15, a: 4,  m: 14 },
+  { name: "Felipe Costa",     pos: "Pivô",    num: 11, g: 8,  a: 3,  m: 11 },
+  { name: "Caio Mendes",      pos: "Ala",     num: 14, g: 4,  a: 5,  m: 9 }
 ];
 
 /* ================= UTIL ================= */
@@ -32,6 +32,16 @@ const $$ = (s, el = document) => [...el.querySelectorAll(s)];
 const pad = n => String(n).padStart(2, "0");
 const bulan = ["JAN", "FEB", "MAR", "APR", "MEI", "JUN", "JUL", "AGU", "SEP", "OKT", "NOV", "DES"];
 const hari = ["Min", "Sen", "Sel", "Rab", "Kam", "Jum", "Sab"];
+const initials = name => name.split(" ").slice(0, 2).map(w => w[0]).join("").toUpperCase();
+
+/* ================= PROGRESS BAR ================= */
+const progress = $("#progress");
+function updateProgress() {
+  const max = document.documentElement.scrollHeight - innerHeight;
+  progress.style.width = (max > 0 ? (scrollY / max) * 100 : 0) + "%";
+}
+addEventListener("scroll", updateProgress, { passive: true });
+updateProgress();
 
 /* ================= NAVBAR ================= */
 const navToggle = $("#navToggle");
@@ -45,8 +55,6 @@ $$("a", navLinks).forEach(a => a.addEventListener("click", () => {
   navToggle.setAttribute("aria-expanded", false);
 }));
 
-// tandai menu aktif saat scroll
-const sections = $$("main section[id]");
 const navObs = new IntersectionObserver(entries => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -54,7 +62,7 @@ const navObs = new IntersectionObserver(entries => {
     }
   });
 }, { rootMargin: "-45% 0px -50% 0px" });
-sections.forEach(s => navObs.observe(s));
+$$("main section[id]").forEach(s => navObs.observe(s));
 
 /* ================= REVEAL ================= */
 const revObs = new IntersectionObserver(entries => {
@@ -63,6 +71,19 @@ const revObs = new IntersectionObserver(entries => {
   });
 }, { threshold: 0.12 });
 $$(".reveal").forEach(el => revObs.observe(el));
+
+/* ================= HERO: efek miring lapangan ================= */
+const heroArt = $("#heroArt");
+const court = $(".court");
+if (heroArt && court && matchMedia("(pointer: fine)").matches) {
+  heroArt.addEventListener("mousemove", e => {
+    const r = heroArt.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    court.style.transform = `rotateX(${18 - y * 12}deg) rotateZ(${-4 + x * 8}deg)`;
+  });
+  heroArt.addEventListener("mouseleave", () => { court.style.transform = ""; });
+}
 
 /* ================= COUNTDOWN ================= */
 function nextMatch() {
@@ -100,8 +121,11 @@ $("#spinBtn").addEventListener("click", () => {
 });
 
 /* ================= JADWAL ================= */
-function isDone(m) { return m.score !== null; }
+const isDone = m => m.score !== null;
 
+function team(name, cls) {
+  return `<div class="team ${cls}"><span class="crest ${name === OUR_TEAM ? "us" : ""}">${initials(name)}</span><span>${name}</span></div>`;
+}
 function renderMatches(filter = "all") {
   const list = $("#matchList");
   const items = matches
@@ -114,27 +138,24 @@ function renderMatches(filter = "all") {
     const d = new Date(m.date);
     const jam = `${pad(d.getHours())}.${pad(d.getMinutes())}`;
     const done = isDone(m);
-    let mid = '<span class="vs">VS</span>';
-    let homeCls = "", awayCls = "";
+    let mid = '<span class="vs">VS</span>', hc = "", ac = "";
     if (done) {
       mid = `<span class="score">${m.score[0]} - ${m.score[1]}</span>`;
-      if (m.score[0] > m.score[1]) homeCls = "win";
-      if (m.score[1] > m.score[0]) awayCls = "win";
+      if (m.score[0] > m.score[1]) hc = "win";
+      if (m.score[1] > m.score[0]) ac = "win";
     }
     return `
       <article class="match" style="animation-delay:${i * 60}ms">
         <div class="m-date"><b>${pad(d.getDate())}</b><small>${bulan[d.getMonth()]}</small></div>
         <div>
-          <div class="m-teams">
-            <span class="${homeCls}">${m.home}</span>${mid}<span class="${awayCls}">${m.away}</span>
-          </div>
+          <div class="m-teams">${team(m.home, hc)}${mid}${team(m.away, ac)}</div>
           <span class="m-meta">${hari[d.getDay()]}, ${jam} WIB · ${m.venue}</span>
         </div>
         <span class="m-badge ${done ? "done" : "upcoming"}">${done ? "Selesai" : "Mendatang"}</span>
       </article>`;
   }).join("");
 }
-$$(".tabs[role=tablist] .tab[data-filter]").forEach(btn => {
+$$(".tab[data-filter]").forEach(btn => {
   btn.addEventListener("click", () => {
     $$(".tab[data-filter]").forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
@@ -146,13 +167,9 @@ renderMatches();
 /* ================= PEMAIN ================= */
 const posLabel = { Goleiro: "Kiper", Fixo: "Fixo", Ala: "Ala", "Pivô": "Pivô" };
 
-function initials(name) {
-  return name.split(" ").slice(0, 2).map(w => w[0]).join("").toUpperCase();
-}
 function renderPlayers(pos = "all") {
-  const grid = $("#playerGrid");
   const items = players.filter(p => pos === "all" || p.pos === pos);
-  grid.innerHTML = items.map((p, i) => `
+  $("#playerGrid").innerHTML = items.map((p, i) => `
     <article class="player" style="animation-delay:${i * 50}ms">
       <span class="p-num">${p.num}</span>
       <div class="p-avatar">${initials(p.name)}</div>
@@ -194,8 +211,13 @@ renderPlayers();
     ball.classList.remove("fly");
     ball.style.left = "50%";
     ball.style.top = "112%";
-    void ball.offsetWidth; // paksa reflow
+    void ball.offsetWidth;
     ball.style.transition = "";
+  }
+  function resetKeeper() {
+    keeper.classList.remove("dive");
+    keeper.style.left = "50%";
+    keeper.style.transform = "translateX(-50%)";
   }
   function showVerdict(text) {
     verdict.textContent = text;
@@ -208,11 +230,9 @@ renderPlayers();
     busy = true;
     shots++;
 
-    // kiper memilih sisi acak
     const kx = 15 + Math.random() * 70;
-    const left = kx < xPct;
     keeper.style.left = kx + "%";
-    keeper.style.transform = `translateX(-50%) rotate(${left ? -18 : 18}deg)`;
+    keeper.style.transform = `translateX(-50%) rotate(${kx < xPct ? -18 : 18}deg)`;
     keeper.classList.add("dive");
 
     ball.classList.add("fly");
@@ -220,18 +240,15 @@ renderPlayers();
     ball.style.top = yPct + "%";
 
     setTimeout(() => {
-      // tembakan di sudut atas lebih sulit diselamatkan
-      const reach = yPct < 30 ? 7 : 13;
+      const reach = yPct < 30 ? 7 : 13; // sudut atas lebih sulit ditahan
       const saved = Math.abs(kx - xPct) < reach && yPct > 18;
-      if (saved) { saves++; showVerdict("DITAHAN!"); msg.textContent = "Kiper berhasil menepis bola. Coba sudut lain!"; }
-      else       { goals++; showVerdict("GOL!");     msg.textContent = "Golaço! Bola masuk ke jaring."; }
+      if (saved) { saves++; showVerdict("Ditahan!"); msg.textContent = "Kiper berhasil menepis bola. Coba sudut lain!"; }
+      else       { goals++; showVerdict("Golaço!");  msg.textContent = "Bola masuk ke jaring. Mantap!"; }
       updateBoard();
     }, 520);
 
     setTimeout(() => {
-      keeper.classList.remove("dive");
-      keeper.style.left = "50%";
-      keeper.style.transform = "translateX(-50%)";
+      resetKeeper();
       resetBall();
       busy = false;
       if (shots >= MAX_SHOTS) finish();
@@ -246,11 +263,7 @@ renderPlayers();
   }
   function reset() {
     shots = goals = saves = 0; busy = false;
-    keeper.classList.remove("dive");
-    keeper.style.left = "50%";
-    keeper.style.transform = "translateX(-50%)";
-    resetBall();
-    updateBoard();
+    resetKeeper(); resetBall(); updateBoard();
     msg.textContent = "Klik di mana saja pada gawang untuk menendang.";
   }
 
@@ -260,7 +273,6 @@ renderPlayers();
     const y = Math.min(92, Math.max(8, ((e.clientY - r.top) / r.height) * 100));
     shoot(x, y);
   });
-  // dukungan keyboard: Enter / Spasi = tembak acak
   goal.addEventListener("keydown", e => {
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
